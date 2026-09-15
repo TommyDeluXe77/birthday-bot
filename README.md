@@ -24,7 +24,7 @@ Der Bot bietet einen übersichtlichen Geburtstagskalender, automatische Geburtst
 - 🎞️ Individuelles GIF im Geburtstags-Embed
 - ⚙️ Server-Einstellungen übersichtlich verwalten
 - 💾 SQLite-Datenbank
-- 🇩🇪 Zeitzone Europe/Berlin
+- 🌍 Zeitzone 🇩🇪 Berlin, 🇬🇧 London, 🇫🇷 Paris, 🇺🇸 New York, 🇺🇸 Chicago, 🇺🇸 Los Angeles, 🇦🇪 Dubai, 🇯🇵 Tokio, 🇸🇬 Singapur, 🇦🇺 Sydney 
 
 ## 🚀 Happy B-Day hinzufügen
 
