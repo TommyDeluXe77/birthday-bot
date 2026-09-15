@@ -1,62 +1,80 @@
-# 🎂 Birthday Bot ULTRA
+# 🎂 Birthday-DeluXe-Bot
 
-Die umfangreiche Version für Discord.
+Ein Discord-Bot zur automatischen Verwaltung und Anzeige von Geburtstagen.
 
-## Features
-- 🎂 Geburtstage speichern
-- 📅 kompletter Geburtstagskalender
+## ✨ Features
+
+- 🎂 Geburtstage speichern und verwalten
+- 🎉 Automatische Geburtstags-Banner
+- 👤 Discord-Avatar automatisch im Banner
+- 📢 `@everyone` bei Geburtstagen
+- 👥 Mehrere Geburtstagskinder → ein gemeinsamer Beitrag
+- 🖼️ Banner werden nebeneinander mit Abstand angezeigt
+- 🎁 Geburtstagsrolle automatisch vergeben
+- 📅 Geburtstagskalender & Übersichten
 - ⏳ Countdown zum nächsten Geburtstag
-- 🎉 professioneller Embed mit Avatar
-- 📣 User-Ping ein/aus
-- 💌 automatische DM ein/aus
-- 🎁 Geburtstagsrolle
-- ⏰ Geburtstagsrolle wird nach 24 Stunden automatisch entfernt
-- 🖼️ eigenes GIF im Embed
-- ⚙️ Server-Einstellungsübersicht
-- 💾 SQLite
-- 🇩🇪 Europe/Berlin
-- 🐍 Python + discord.py
+- 🧪 `/birthday test` zum Testen
 
-## Installation
-1. Python 3.10+ installieren.
-2. `py -m pip install -r requirements.txt`
-3. `.env.example` in `.env` kopieren.
-4. Bot-Token eintragen.
-5. `start.bat` starten.
+🎁 Geburtstagsrolle
 
-## Discord-Bot Rechte
-Scopes:
-- bot
-- applications.commands
+Mit /birthday role kann eine Rolle aktiviert werden.
 
-Permissions:
-- View Channels
-- Send Messages
-- Embed Links
-- Manage Roles (für Geburtstagsrolle)
+Die Rolle wird am Geburtstag vergeben.
 
-**Wichtig:** Die Bot-Rolle muss über der Geburtstagsrolle liegen.
+Die Rolle ist für 24 Stunden vorgesehen.
 
-## Befehle
+Der Bot prüft die Rolle regelmäßig.
 
-### Mitglieder
-- `/birthday set 15.03`
-- `/birthday set 15.03.1995`
-- `/birthday show`
-- `/birthday remove`
-- `/birthday list`
-- `/birthday next`
+Abgelaufene Rollen werden automatisch entfernt.
 
-### Admin
-- `/birthday channel #kanal`
-- `/birthday dm true/false`
-- `/birthday role @Rolle`
-- `/birthday roleoff`
-- `/birthday ping true/false`
-- `/birthday gif https://...`
-- `/birthday gif off`
-- `/birthday test`
-- `/birthday settings`
+Wichtig: Die Bot-Rolle muss in Discord über der Geburtstagsrolle
+stehen und der Bot benötigt Rollen verwalten.
+
+
+🛠️ Befehle
+
+Für Mitglieder
+
+Befehl                       Funktion
+
+/birthday set TT.MM        Geburtstag ohne Geburtsjahr speichern
+/birthday set TT.MM.JJJJ   Geburtstag mit Geburtsjahr speichern
+/birthday show             eigenen Geburtstag und Countdown anzeigen
+/birthday remove           eigenen Geburtstag löschen
+/birthday list             Geburtstagsliste des Servers
+/birthday calendar         Kalender nach Monaten
+/birthday upcoming         nächste 1--10 Geburtstage
+/birthday next             nächsten Geburtstag mit Countdown
+/birthday week             Geburtstage der nächsten 7 Tage
+/birthday help             Hilfe anzeigen
+/birthday game             zuletzt erkanntes Spiel anzeigen
+
+Für Administratoren
+
+Für diese Einstellungen benötigt der Benutzer je nach Befehl
+entsprechende Discord-Berechtigungen.
+
+Befehl                              Funktion
+
+/birthday channel #kanal          Geburtstagskanal festlegen
+
+/birthday dm True/False           automatische Geburtstags-DMs an/aus
+
+/birthday role @Rolle             Geburtstagsrolle aktivieren
+
+/birthday roleoff                 Geburtstagsrolle deaktivieren
+
+/birthday ping True/False         User-Ping-Einstellung
+
+/birthday gif URL                 GIF-URL für ältere/optionale
+Embed-Funktionen setzen
+
+/birthday banner URL              externe Banner-URL setzen bzw. mit
+off deaktivieren
+
+/birthday settings                aktuelle Bot-Einstellungen anzeigen
+
+/birthday test                    Geburtstags-Banner testen
 
 ## GIF
 Du kannst eine direkte GIF-URL über `/birthday gif` setzen.
@@ -66,5 +84,3 @@ Alternativ kannst du in `.env` `BIRTHDAY_GIF=` festlegen.
 Die Prüfung läuft jede Minute. Der Geburtstagsgruß wird um 00:00 Uhr in Europe/Berlin verschickt.
 Die Geburtstagsrolle wird nach 24 Stunden automatisch entfernt.
 
-## Sicherheit
-Den Bot-Token niemals veröffentlichen oder in Discord posten.
