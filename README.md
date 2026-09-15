@@ -82,7 +82,7 @@ Happy B-Day verwendet nur die Discord-Berechtigungen, die für seine Funktionen 
 
 Bei Fragen, Problemen oder Feedback kannst du dich an den Betreiber wenden.
 
-📧 **Mail:** Mail@djtommydeluxe.de
+**Discord:** tommydeluxe
 
 ## 📌 Hinweise
 
