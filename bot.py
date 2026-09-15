@@ -700,17 +700,89 @@ async def remove(i):
     del_bday(i.guild_id,i.user.id)
     await i.response.send_message("🗑️ Geburtstag gelöscht.",ephemeral=True)
 
-@birthday.command(name="list",description="Geburtstagskalender des Servers")
+@birthday.command(name="list",description="Saubere Geburtstagsliste mit Zeilen und Spalten")
 async def list_b(i):
-    rows=db.execute("SELECT user_id,day,month,year FROM birthdays WHERE guild_id=? ORDER BY month,day",(i.guild_id,)).fetchall()
-    if not rows: return await i.response.send_message("📭 Noch keine Geburtstage gespeichert.")
-    now=datetime.now(TZ); lines=[]
+    rows=db.execute(
+        "SELECT user_id,day,month,year FROM birthdays WHERE guild_id=? ORDER BY month,day,year",
+        (i.guild_id,)
+    ).fetchall()
+    if not rows:
+        return await i.response.send_message(
+            "📭 **Noch keine Geburtstage gespeichert.**\n\n"
+            "Nutze `/birthday set TT.MM` oder `/birthday set TT.MM.JJJJ`, um deinen Geburtstag einzutragen."
+        )
+
+    months={
+        1:"Januar",2:"Februar",3:"März",4:"April",5:"Mai",6:"Juni",
+        7:"Juli",8:"August",9:"September",10:"Oktober",11:"November",12:"Dezember"
+    }
+    icons={
+        1:"❄️",2:"💝",3:"🌷",4:"🌸",5:"🌼",6:"☀️",
+        7:"🏖️",8:"🌻",9:"🍂",10:"🎃",11:"🍁",12:"🎄"
+    }
+    now=datetime.now(TZ)
+    grouped={m:[] for m in range(1,13)}
+
     for u,d,m,y in rows:
-        mem=i.guild.get_member(u); name=mem.display_name if mem else f"<@{u}>"
-        days=countdown(next_birthday(d,m,now),now)[0]
-        lines.append(f"🎂 **{d:02d}.{m:02d}** — {name}  •  ⏳ {days} Tage")
-    e=discord.Embed(title="📅 Geburtstagskalender",description="\n".join(lines[:50]))
-    e.set_footer(text=f"{len(rows)} Geburtstage gespeichert")
+        mem=i.guild.get_member(u)
+        name=mem.display_name if mem else f"User {u}"
+        # Einheitliche Spaltenbreite: sehr lange Namen werden gekürzt,
+        # damit die Tabelle auf Discord sauber ausgerichtet bleibt.
+        name=name.replace("\n"," ").replace("\r"," ").strip()
+        if len(name)>24:
+            name=name[:21]+"..."
+
+        age=None
+        if y:
+            age=now.year-y
+            birthday_this_year=datetime(now.year,m,d,tzinfo=TZ)
+            if birthday_this_year > now:
+                age-=1
+
+        grouped[m].append((d,name,age))
+
+    this_month=sum(1 for _,_,m,_ in rows if m==now.month)
+    e=discord.Embed(
+        title="🎂 Geburtstagsliste",
+        description=(
+            f"👥 **{len(rows)}** eingetragen   •   📅 **{this_month}** diesen Monat\n"
+            "```text\n"
+            "DATUM     NAME                       ALTER\n"
+            "────────────────────────────────────────\n"
+            "Sauber nach Monat sortiert\n"
+            "```"
+        ),
+        colour=discord.Colour.from_rgb(212,175,55)
+    )
+
+    for m in range(1,13):
+        entries=grouped[m]
+        if not entries:
+            continue
+
+        lines=[
+            "DATUM     NAME                       ALTER",
+            "────────────────────────────────────────"
+        ]
+        for d,name,age in entries[:10]:
+            age_text=f"{age:>5}" if age is not None else "    —"
+            lines.append(f"{d:02d}.{m:02d}.    {name:<24} {age_text}")
+
+        if len(entries)>10:
+            lines.append("────────────────────────────────────────")
+            lines.append(f"+ {len(entries)-10} weitere Geburtstage")
+
+        month_title=f"{icons[m]} {months[m].upper()}"
+        if m==now.month:
+            month_title=f"⭐ {month_title} · DIESEN MONAT"
+
+        e.add_field(
+            name=month_title,
+            value="```text\n"+"\n".join(lines)+"\n```",
+            inline=False
+        )
+
+    e.set_footer(text="Birthday-DeluXe-Bot • /birthday set zum Eintragen")
     await i.response.send_message(embed=e)
 
 
