@@ -1,4 +1,4 @@
-# 🎂 Birthday-DeluXe-Bot
+# 🎂 Happy B-Day-Bot
 
 Ein Discord-Bot zur automatischen Verwaltung und Anzeige von Geburtstagen.
 
