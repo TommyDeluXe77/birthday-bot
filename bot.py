@@ -312,7 +312,12 @@ async def apply_birthday_role(guild, member, role_id, now):
 
 
 async def build_combined_birthday_banners(banners):
-    """Kombiniert mehrere vollständige Geburtstagsbanner nebeneinander."""
+    """Kombiniert vollständige Birthday-Banner mit transparentem Zwischenraum.
+
+    Der Abstand bleibt bewusst erhalten. Er ist transparent, damit Discord an
+    dieser Stelle exakt den jeweiligen Kanal-/Client-Hintergrund durchscheint.
+    Dadurch entsteht kein schwarzer oder dunkelblauer Balken zwischen den Bannern.
+    """
     if not banners:
         return None
 
@@ -322,28 +327,35 @@ async def build_combined_birthday_banners(banners):
         with Image.open(banner) as img:
             images.append(img.convert("RGB").copy())
 
-    # Etwas Abstand zwischen den vollständigen Bannern, damit sie im Discord-Post
-    # klar voneinander getrennt sind.
+    # Der gewünschte sichtbare Abstand zwischen den Bannern.
     gap = 160
     width=sum(img.width for img in images) + gap * (len(images) - 1)
     height=max(img.height for img in images)
-    canvas=Image.new("RGB", (width, height), "#0b1020")
+
+    # WICHTIG: RGBA + Alpha 0 im Zwischenraum. Discord zeigt dort seinen
+    # tatsächlichen Hintergrund, statt eine künstliche dunkle Farbe.
+    canvas=Image.new("RGBA", (width, height), (0, 0, 0, 0))
     x=0
     for index, img in enumerate(images):
-        canvas.paste(img, (x, 0))
+        canvas.paste(img.convert("RGBA"), (x, 0))
         x += img.width
         if index < len(images) - 1:
             x += gap
 
     out=BytesIO()
-    quality=88
-    while quality >= 60:
-        out.seek(0); out.truncate(0)
-        canvas.save(out, format="JPEG", quality=quality, optimize=True, progressive=True)
-        if out.tell() <= 8 * 1024 * 1024:
-            out.seek(0)
-            return out
-        quality -= 4
+    canvas.save(out, format="PNG", optimize=True)
+    if out.tell() <= 8 * 1024 * 1024:
+        out.seek(0)
+        return out
+
+    # Fallback: falls PNG wider/komplexer als das Discord-Limit wird,
+    # bleibt die Transparenz erhalten und die Bilder werden moderat skaliert.
+    scale = ((8 * 1024 * 1024) / out.tell()) ** 0.5 * 0.98
+    new_w=max(1, int(canvas.width * scale))
+    new_h=max(1, int(canvas.height * scale))
+    resized=canvas.resize((new_w, new_h), Image.Resampling.LANCZOS)
+    out=BytesIO()
+    resized.save(out, format="PNG", optimize=True)
     out.seek(0)
     return out
 
@@ -400,7 +412,7 @@ async def announce(guild_id,user_id,day,month,year,now):
                 combined.seek(0)
                 await ch.send(
                     content="@everyone",
-                    file=discord.File(combined, filename="birthday_banners.jpg"),
+                    file=discord.File(combined, filename="birthday_banners.png"),
                     allowed_mentions=discord.AllowedMentions(users=False, roles=False, everyone=True)
                 )
                 channel_sent=True
@@ -713,8 +725,8 @@ async def list_b(i):
         )
 
     months={
-        1:"Januar",2:"Februar",3:"März",4:"April",5:"Mai",6:"Juni",
-        7:"Juli",8:"August",9:"September",10:"Oktober",11:"November",12:"Dezember"
+        1:"JANUAR",2:"FEBRUAR",3:"MÄRZ",4:"APRIL",5:"MAI",6:"JUNI",
+        7:"JULI",8:"AUGUST",9:"SEPTEMBER",10:"OKTOBER",11:"NOVEMBER",12:"DEZEMBER"
     }
     icons={
         1:"❄️",2:"💝",3:"🌷",4:"🌸",5:"🌼",6:"☀️",
@@ -726,11 +738,9 @@ async def list_b(i):
     for u,d,m,y in rows:
         mem=i.guild.get_member(u)
         name=mem.display_name if mem else f"User {u}"
-        # Einheitliche Spaltenbreite: sehr lange Namen werden gekürzt,
-        # damit die Tabelle auf Discord sauber ausgerichtet bleibt.
         name=name.replace("\n"," ").replace("\r"," ").strip()
-        if len(name)>24:
-            name=name[:21]+"..."
+        if len(name)>22:
+            name=name[:19]+"..."
 
         age=None
         if y:
@@ -742,48 +752,62 @@ async def list_b(i):
         grouped[m].append((d,name,age))
 
     this_month=sum(1 for _,_,m,_ in rows if m==now.month)
-    e=discord.Embed(
-        title="🎂 Geburtstagsliste",
-        description=(
-            f"👥 **{len(rows)}** eingetragen   •   📅 **{this_month}** diesen Monat\n"
-            "```text\n"
-            "DATUM     NAME                       ALTER\n"
-            "────────────────────────────────────────\n"
-            "Sauber nach Monat sortiert\n"
-            "```"
-        ),
-        colour=discord.Colour.from_rgb(212,175,55)
-    )
+
+    # Eine einzige, feste Tabelle: dadurch bleiben Zeilen und Spalten
+    # unabhängig von der Discord-Fensterbreite sauber ausgerichtet.
+    table=[]
+    table.append("DATUM      NAME                    ALTER")
+    table.append("────────────────────────────────────────")
 
     for m in range(1,13):
         entries=grouped[m]
         if not entries:
             continue
 
-        lines=[
-            "DATUM     NAME                       ALTER",
-            "────────────────────────────────────────"
-        ]
-        for d,name,age in entries[:10]:
+        marker="⭐ " if m==now.month else "   "
+        table.append(f"{marker}{icons[m]} {months[m]}")
+        table.append("────────────────────────────────────────")
+
+        for d,name,age in entries:
             age_text=f"{age:>5}" if age is not None else "    —"
-            lines.append(f"{d:02d}.{m:02d}.    {name:<24} {age_text}")
+            table.append(f"{d:02d}.{m:02d}.    {name:<22} {age_text}")
 
-        if len(entries)>10:
-            lines.append("────────────────────────────────────────")
-            lines.append(f"+ {len(entries)-10} weitere Geburtstage")
+        table.append("")
 
-        month_title=f"{icons[m]} {months[m].upper()}"
-        if m==now.month:
-            month_title=f"⭐ {month_title} · DIESEN MONAT"
+    # Discord-Description ist auf 4096 Zeichen begrenzt. Bei sehr großen
+    # Servern wird die Tabelle automatisch auf mehrere saubere Seiten geteilt.
+    chunks=[]
+    current=[]
+    current_len=0
+    for line in table:
+        add_len=len(line)+1
+        if current and current_len+add_len>3600:
+            chunks.append(current)
+            current=[]
+            current_len=0
+        current.append(line)
+        current_len+=add_len
+    if current:
+        chunks.append(current)
 
-        e.add_field(
-            name=month_title,
-            value="```text\n"+"\n".join(lines)+"\n```",
-            inline=False
+    embeds=[]
+    for idx,chunk in enumerate(chunks,1):
+        title="🎂 Geburtstagsliste"
+        if len(chunks)>1:
+            title += f"  •  Seite {idx}/{len(chunks)}"
+
+        e=discord.Embed(
+            title=title,
+            description=(
+                f"👥 **{len(rows)}** eingetragen   •   📅 **{this_month}** diesen Monat\n\n"
+                "```text\n" + "\n".join(chunk) + "\n```"
+            ),
+            colour=discord.Colour.from_rgb(212,175,55)
         )
+        e.set_footer(text="Birthday-DeluXe-Bot • /birthday set zum Eintragen")
+        embeds.append(e)
 
-    e.set_footer(text="Birthday-DeluXe-Bot • /birthday set zum Eintragen")
-    await i.response.send_message(embed=e)
+    await i.response.send_message(embeds=embeds[:10])
 
 
 @birthday.command(name="calendar",description="Geburtstagskalender mit Monatsüberschriften anzeigen")
@@ -885,11 +909,19 @@ async def next_b(i:discord.Interaction):
             if total > 1:
                 title += f" ({index}/{total})"
 
+            # Farbwelt des neuen Birthday-Banners: kräftiges Blau als Basis,
+            # Gold und Rot als sichtbare Akzente.
             e = discord.Embed(
-                title=title,
-                description=desc,
-                colour=discord.Colour.from_rgb(212,175,55)
+                title=f"💙 {title}",
+                description=(
+                    "🟨 **BIRTHDAY DELUXE**\n"
+                    "────────────────────────\n"
+                    f"{desc}\n\n"
+                    "🔴 **Alles Gute schon jetzt!**"
+                ),
+                colour=discord.Colour.from_rgb(20, 115, 235)
             )
+            e.set_footer(text="🎂 Birthday-DeluXe-Bot  •  💙 Blau  🟨 Gold  🔴 Rot")
 
             if mem:
                 try:
@@ -1164,7 +1196,7 @@ async def test(i):
 
         await ch.send(
             content=content,
-            file=discord.File(combined, filename="birthday_banners.jpg"),
+            file=discord.File(combined, filename="birthday_banners.png"),
             allowed_mentions=discord.AllowedMentions(
                 users=False, roles=False, everyone=True
             )
