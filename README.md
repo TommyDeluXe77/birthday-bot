@@ -1,86 +1,121 @@
-# 🎂 Happy B-Day-Bot
+🎂 Happy B-Day – Discord Birthday Bot
 
-Ein Discord-Bot zur automatischen Verwaltung und Anzeige von Geburtstagen.
-
-## ✨ Features
-
-- 🎂 Geburtstage speichern und verwalten
-- 🎉 Automatische Geburtstags-Banner
-- 👤 Discord-Avatar automatisch im Banner
-- 📢 `@everyone` bei Geburtstagen
-- 👥 Mehrere Geburtstagskinder → ein gemeinsamer Beitrag
-- 🖼️ Banner werden nebeneinander mit Abstand angezeigt
-- 🎁 Geburtstagsrolle automatisch vergeben
-- 📅 Geburtstagskalender & Übersichten
-- ⏳ Countdown zum nächsten Geburtstag
-- 🧪 `/birthday test` zum Testen
-
-🎁 Geburtstagsrolle
-
-Mit /birthday role kann eine Rolle aktiviert werden.
-
-Die Rolle wird am Geburtstag vergeben.
-
-Die Rolle ist für 24 Stunden vorgesehen.
-
-Der Bot prüft die Rolle regelmäßig.
-
-Abgelaufene Rollen werden automatisch entfernt.
-
-Wichtig: Die Bot-Rolle muss in Discord über der Geburtstagsrolle
-stehen und der Bot benötigt Rollen verwalten.
+Ein moderner Discord-Bot für Geburtstage – übersichtlich, automatisch und einfach zu bedienen.
 
 
-🛠️ Befehle
 
-Für Mitglieder
+🎉 Was ist Happy B-Day?
 
-Befehl                       Funktion
+Happy B-Day verwaltet die Geburtstage deiner Discord-Community und sorgt dafür, dass kein Geburtstag vergessen wird.
 
-/birthday set TT.MM        Geburtstag ohne Geburtsjahr speichern
-/birthday set TT.MM.JJJJ   Geburtstag mit Geburtsjahr speichern
-/birthday show             eigenen Geburtstag und Countdown anzeigen
-/birthday remove           eigenen Geburtstag löschen
-/birthday list             Geburtstagsliste des Servers
-/birthday calendar         Kalender nach Monaten
-/birthday upcoming         nächste 1--10 Geburtstage
-/birthday next             nächsten Geburtstag mit Countdown
-/birthday week             Geburtstage der nächsten 7 Tage
-/birthday help             Hilfe anzeigen
-/birthday game             zuletzt erkanntes Spiel anzeigen
+Der Bot bietet einen übersichtlichen Geburtstagskalender, automatische Geburtstagsnachrichten, Geburtstagsrollen und weitere Funktionen für eine lebendige Community.
 
-Für Administratoren
+✨ Funktionen
 
-Für diese Einstellungen benötigt der Benutzer je nach Befehl
-entsprechende Discord-Berechtigungen.
+🎂 Geburtstage eintragen und verwalten
 
-Befehl                              Funktion
+📅 Übersichtlicher Geburtstagskalender
 
-/birthday channel #kanal          Geburtstagskanal festlegen
+⏳ Countdown bis zum nächsten Geburtstag
 
-/birthday dm True/False           automatische Geburtstags-DMs an/aus
+🎉 Automatische Geburtstagsnachrichten
 
-/birthday role @Rolle             Geburtstagsrolle aktivieren
+🏷️ Automatische Geburtstagsrolle
 
-/birthday roleoff                 Geburtstagsrolle deaktivieren
+⏱️ Automatische Entfernung der Geburtstagsrolle nach 24 Stunden
 
-/birthday ping True/False         User-Ping-Einstellung
+👤 Persönlicher Discord-Avatar im Geburtstags-Embed
 
-/birthday gif URL                 GIF-URL für ältere/optionale
-Embed-Funktionen setzen
+🔔 Benutzer-Ping ein- und ausschaltbar
 
-/birthday banner URL              externe Banner-URL setzen bzw. mit
-off deaktivieren
+💌 Automatische Geburtstags-DM ein- und ausschaltbar
 
-/birthday settings                aktuelle Bot-Einstellungen anzeigen
+🎞️ Individuelles GIF im Geburtstags-Embed
 
-/birthday test                    Geburtstags-Banner testen
+⚙️ Server-Einstellungen übersichtlich verwalten
 
-## GIF
-Du kannst eine direkte GIF-URL über `/birthday gif` setzen.
-Alternativ kannst du in `.env` `BIRTHDAY_GIF=` festlegen.
+💾 SQLite-Datenbank
 
-## Automatik
-Die Prüfung läuft jede Minute. Der Geburtstagsgruß wird um 00:00 Uhr in Europe/Berlin verschickt.
-Die Geburtstagsrolle wird nach 24 Stunden automatisch entfernt.
+🇩🇪 Zeitzone Europe/Berlin
 
+🚀 Happy B-Day hinzufügen
+
+👉 🎂 Happy B-Day zu Discord hinzufügen
+
+Installation
+
+Auf Happy B-Day hinzufügen klicken.
+
+Deinen Discord-Server auswählen.
+
+Die angeforderten Berechtigungen bestätigen.
+
+Auf Autorisieren klicken.
+
+Fertig – Happy B-Day ist auf deinem Server.
+
+Du musst keine Dateien herunterladen und keine Software auf deinem Computer installieren.
+
+⚙️ Einrichtung
+
+Nach der Installation kann der Server-Administrator den Bot über seine Slash-Commands konfigurieren.
+
+Die benötigten Bot-Berechtigungen werden bereits beim Hinzufügen des Bots angefordert.
+
+🔐 Datenschutz
+
+Happy B-Day benötigt bestimmte Discord-Daten, damit die Geburtstagsfunktionen funktionieren können.
+
+Gespeichert werden unter anderem:
+
+Discord-Server-ID
+
+Discord-Benutzer-ID
+
+Geburtstag (Tag und Monat)
+
+optional das Geburtsjahr
+
+serverbezogene Einstellungen
+
+👉 Datenschutzrichtlinie
+
+📜 Nutzungsbedingungen
+
+Für die Nutzung von Happy B-Day gelten unsere:
+
+👉 Nutzungsbedingungen
+
+🛡️ Berechtigungen
+
+Happy B-Day verwendet nur die Discord-Berechtigungen, die für seine Funktionen benötigt werden:
+
+Kanäle ansehen
+
+Nachrichten senden
+
+Nachrichtenverlauf anzeigen
+
+Links einbetten
+
+Dateien anhängen
+
+Rollen verwalten
+
+Administratorrechte werden nicht benötigt.
+
+🆘 Support
+
+Bei Fragen, Problemen oder Feedback kannst du dich an den Betreiber wenden.
+
+📧 Mail: Mail@djtommydeluxe.de
+
+📌 Hinweise
+
+Happy B-Day ist ein Discord-Bot und läuft serverseitig. Nutzer müssen keine Bot-Dateien herunterladen oder selbst hosten.
+
+Die Verfügbarkeit des Bots kann von der Verfügbarkeit der verwendeten Dienste und Discord abhängen.
+
+🎂 Happy B-Day
+
+Geburtstage vergessen war gestern.
